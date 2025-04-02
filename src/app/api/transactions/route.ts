@@ -1,10 +1,19 @@
 import { NextResponse } from "next/server";
-import { kv } from "@vercel/kv";
+
+interface Transaction {
+  id: string;
+  type: "bill" | "expense" | "income";
+  amount: number;
+  description: string;
+  date?: string;
+}
+
+// In-memory storage
+let transactions: Transaction[] = [];
 
 export async function GET() {
   try {
-    const transactions = await kv.get("transactions");
-    return NextResponse.json(transactions || []);
+    return NextResponse.json(transactions);
   } catch (error) {
     console.error("Error loading transactions:", error);
     return NextResponse.json([]);
@@ -13,8 +22,8 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const transactions = await request.json();
-    await kv.set("transactions", transactions);
+    const newTransactions = await request.json();
+    transactions = newTransactions;
     return NextResponse.json({
       success: true,
       transactions,
