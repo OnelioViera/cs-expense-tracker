@@ -20,24 +20,28 @@ interface NewTransaction {
   date?: string;
 }
 
-const descriptionOptions = {
+const descriptionOptions: Record<TransactionType, string[]> = {
   bill: [
-    "Rent",
     "Utilities",
-    "Insurance",
-    "Phone Bill",
+    "Progressive",
+    "Mint Mobile",
     "Internet",
-    "Other Bill",
+    "Car Payment",
+    "Mortgage",
+    "Car Wash",
+    "CPAP Supplies",
+    "Hulu",
+    "Netflix",
   ],
   expense: [
     "Groceries",
     "Transportation",
     "Entertainment",
     "Shopping",
-    "Dining Out",
-    "Other Expense",
+    "Healthcare",
+    "Other",
   ],
-  income: ["Salary", "Freelance", "Investments", "Gifts", "Other Income"],
+  income: ["Salary", "Gifts", "Annuity", "Other"],
 };
 
 export default function Home() {
