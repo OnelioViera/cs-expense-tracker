@@ -40,6 +40,7 @@ const descriptionOptions: Record<TransactionType, string[]> = {
     "Entertainment",
     "Shopping",
     "Healthcare",
+    "Clothes",
     "Other",
   ],
   income: ["Salary", "Gifts", "Annuity", "Other"],
