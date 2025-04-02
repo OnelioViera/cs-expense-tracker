@@ -100,7 +100,18 @@ export default function Home() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newTransaction.amount || !newTransaction.description) return;
+
+    // Validate amount
+    if (!newTransaction.amount || newTransaction.amount === "0.00") {
+      toast.error("Please enter an amount");
+      return;
+    }
+
+    // Validate description
+    if (!newTransaction.description) {
+      toast.error("Please select a description");
+      return;
+    }
 
     const transaction: Transaction = {
       id: Date.now().toString(),
@@ -118,20 +129,19 @@ export default function Home() {
 
     try {
       await saveTransactions(updatedTransactions);
+      toast.success("Transaction added successfully!");
     } catch (error) {
       console.error("Error saving transaction:", error);
       // Revert the state if saving fails
       setTransactions(transactions);
+      toast.error("Failed to save transaction");
     }
 
     setNewTransaction({
       type: "expense",
-      amount: "0.00",
+      amount: "",
       description: "",
     });
-
-    // Show success toast
-    toast.success("Transaction added successfully!");
   };
 
   const handleDelete = async (id: string) => {
