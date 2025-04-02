@@ -98,8 +98,23 @@ export default function Home() {
     loadData();
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const form = e.currentTarget;
+    const submitButton = form.querySelector('button[type="submit"]');
+    const transactionType = submitButton
+      ?.closest(".bg-white")
+      ?.querySelector("h2")
+      ?.textContent?.toLowerCase()
+      .includes("bill")
+      ? "bill"
+      : submitButton
+          ?.closest(".bg-white")
+          ?.querySelector("h2")
+          ?.textContent?.toLowerCase()
+          .includes("income")
+      ? "income"
+      : "expense";
 
     // Validate amount
     if (!newTransaction.amount || newTransaction.amount === "0.00") {
@@ -115,11 +130,11 @@ export default function Home() {
 
     const transaction: Transaction = {
       id: Date.now().toString(),
-      type: newTransaction.type,
+      type: transactionType,
       amount: parseFloat(newTransaction.amount),
       description: newTransaction.description,
       date:
-        newTransaction.type === "expense"
+        transactionType === "expense"
           ? new Date().toISOString().split("T")[0]
           : undefined,
     };
@@ -130,18 +145,17 @@ export default function Home() {
     try {
       await saveTransactions(updatedTransactions);
       toast.success("Transaction added successfully!");
+      setNewTransaction({
+        type: "expense",
+        amount: "",
+        description: "",
+      });
     } catch (error) {
       console.error("Error saving transaction:", error);
       // Revert the state if saving fails
       setTransactions(transactions);
       toast.error("Failed to save transaction");
     }
-
-    setNewTransaction({
-      type: "expense",
-      amount: "",
-      description: "",
-    });
   };
 
   const handleDelete = async (id: string) => {
