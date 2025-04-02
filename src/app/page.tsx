@@ -47,6 +47,33 @@ export default function Home() {
     amount: "0.00",
     description: "",
   });
+  const [selectedMonth, setSelectedMonth] = useState(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
+      2,
+      "0"
+    )}`;
+  });
+
+  const months = [
+    { value: "01", label: "January" },
+    { value: "02", label: "February" },
+    { value: "03", label: "March" },
+    { value: "04", label: "April" },
+    { value: "05", label: "May" },
+    { value: "06", label: "June" },
+    { value: "07", label: "July" },
+    { value: "08", label: "August" },
+    { value: "09", label: "September" },
+    { value: "10", label: "October" },
+    { value: "11", label: "November" },
+    { value: "12", label: "December" },
+  ];
+
+  const years = Array.from({ length: 5 }, (_, i) => {
+    const year = new Date().getFullYear() - 2 + i;
+    return year.toString();
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -102,12 +129,49 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50 p-8">
       <Toaster position="top-center" />
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">
-          Expense Tracker
-        </h1>
+        {/* Month Selector */}
+        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold text-gray-900">
+              Expense Tracker
+            </h1>
+            <div className="flex items-center gap-4">
+              <select
+                value={selectedMonth.split("-")[1]}
+                onChange={(e) =>
+                  setSelectedMonth(
+                    `${selectedMonth.split("-")[0]}-${e.target.value}`
+                  )
+                }
+                className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900 h-10 px-3"
+              >
+                {months.map((month) => (
+                  <option key={month.value} value={month.value}>
+                    {month.label}
+                  </option>
+                ))}
+              </select>
+              <select
+                value={selectedMonth.split("-")[0]}
+                onChange={(e) =>
+                  setSelectedMonth(
+                    `${e.target.value}-${selectedMonth.split("-")[1]}`
+                  )
+                }
+                className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900 h-10 px-3"
+              >
+                {years.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           {/* Bills Summary */}
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-xl font-semibold text-gray-800 mb-2">
@@ -137,22 +201,22 @@ export default function Home() {
               ${totals.income.toFixed(2)}
             </p>
           </div>
-        </div>
 
-        {/* Balance Card */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">
-            Current Balance
-          </h2>
-          <p
-            className={`text-3xl font-bold ${
-              totals.income - totals.expense - totals.bill >= 0
-                ? "text-green-600"
-                : "text-red-600"
-            }`}
-          >
-            ${(totals.income - totals.expense - totals.bill).toFixed(2)}
-          </p>
+          {/* Balance Card */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-2">
+              Current Balance
+            </h2>
+            <p
+              className={`text-3xl font-bold ${
+                totals.income - totals.expense - totals.bill >= 0
+                  ? "text-green-600"
+                  : "text-red-600"
+              }`}
+            >
+              ${(totals.income - totals.expense - totals.bill).toFixed(2)}
+            </p>
+          </div>
         </div>
 
         {/* Input Cards */}
