@@ -32,6 +32,7 @@ const descriptionOptions: Record<TransactionType, string[]> = {
     "CPAP Supplies",
     "Hulu",
     "Netflix",
+    "Spotify",
   ],
   expense: [
     "Groceries",
