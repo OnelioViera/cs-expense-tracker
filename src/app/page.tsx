@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
+import Link from "next/link";
 
 interface Transaction {
   id: string;
@@ -41,13 +42,23 @@ const descriptionOptions: Record<TransactionType, string[]> = {
     "Shopping",
     "Healthcare",
     "Clothes",
+    "Dog Expenses",
+    "Holidays",
+    "Gifts",
+    "Projects",
+    "Maintenance",
     "Other",
   ],
   income: ["Salary", "Gifts", "Annuity", "Other"],
 };
 
 export default function Home() {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>(() => {
+    if (typeof window !== "undefined") {
+      return JSON.parse(localStorage.getItem("transactions") || "[]");
+    }
+    return [];
+  });
   const [newTransaction, setNewTransaction] = useState<NewTransaction>({
     type: "expense",
     amount: "0.00",
@@ -106,7 +117,9 @@ export default function Home() {
       }),
     };
 
-    setTransactions([...transactions, transaction]);
+    const updatedTransactions = [...transactions, transaction];
+    setTransactions(updatedTransactions);
+    localStorage.setItem("transactions", JSON.stringify(updatedTransactions));
     setNewTransaction({
       type: "expense",
       amount: "0.00",
@@ -118,7 +131,9 @@ export default function Home() {
   };
 
   const handleDelete = (id: string) => {
-    setTransactions(transactions.filter((t) => t.id !== id));
+    const updatedTransactions = transactions.filter((t) => t.id !== id);
+    setTransactions(updatedTransactions);
+    localStorage.setItem("transactions", JSON.stringify(updatedTransactions));
     toast.success("Transaction deleted successfully!");
   };
 
@@ -142,6 +157,24 @@ export default function Home() {
               Expense Tracker
             </h1>
             <div className="flex items-center gap-4">
+              <Link
+                href="/monthly"
+                className="inline-flex items-center text-blue-600 hover:text-blue-800"
+              >
+                Monthly Summary
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 ml-2"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </Link>
               <select
                 value={selectedMonth.split("-")[1]}
                 onChange={(e) =>
