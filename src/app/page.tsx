@@ -47,6 +47,7 @@ const descriptionOptions: Record<TransactionType, string[]> = {
     "Gifts",
     "Projects",
     "Maintenance",
+    "Alcohol",
     "Other",
   ],
   income: ["Salary", "Gifts", "Annuity", "Other"],
