@@ -1,27 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import Link from "next/link";
-
-interface Transaction {
-  id: string;
-  type: "bill" | "expense" | "income";
-  amount: number;
-  description: string;
-  date?: string;
-}
-
-type TransactionType = "bill" | "expense" | "income";
+import {
+  Transaction,
+  saveTransactions,
+  loadTransactions,
+} from "@/utils/blob-storage";
 
 interface NewTransaction {
-  type: TransactionType;
+  type: "bill" | "expense" | "income";
   amount: string;
   description: string;
-  date?: string;
 }
 
-const descriptionOptions: Record<TransactionType, string[]> = {
+const descriptionOptions: Record<"bill" | "expense" | "income", string[]> = {
   bill: [
     "Utilities",
     "Progressive",
@@ -54,12 +48,8 @@ const descriptionOptions: Record<TransactionType, string[]> = {
 };
 
 export default function Home() {
-  const [transactions, setTransactions] = useState<Transaction[]>(() => {
-    if (typeof window !== "undefined") {
-      return JSON.parse(localStorage.getItem("transactions") || "[]");
-    }
-    return [];
-  });
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [newTransaction, setNewTransaction] = useState<NewTransaction>({
     type: "expense",
     amount: "0.00",
@@ -93,34 +83,47 @@ export default function Home() {
     return year.toString();
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    // Load transactions from Blob storage
+    const loadData = async () => {
+      try {
+        const loadedTransactions = await loadTransactions();
+        setTransactions(loadedTransactions);
+      } catch (error) {
+        console.error("Error loading transactions:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadData();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Validate amount
-    if (!newTransaction.amount || newTransaction.amount === "0.00") {
-      toast.error("Please enter an amount");
-      return;
-    }
-
-    // Validate description
-    if (!newTransaction.description) {
-      toast.error("Please select a description");
-      return;
-    }
+    if (!newTransaction.amount || !newTransaction.description) return;
 
     const transaction: Transaction = {
       id: Date.now().toString(),
       type: newTransaction.type,
       amount: parseFloat(newTransaction.amount),
       description: newTransaction.description,
-      ...(newTransaction.type === "expense" && {
-        date: new Date().toISOString().split("T")[0],
-      }),
+      date:
+        newTransaction.type === "expense"
+          ? new Date().toISOString().split("T")[0]
+          : undefined,
     };
 
     const updatedTransactions = [...transactions, transaction];
     setTransactions(updatedTransactions);
-    localStorage.setItem("transactions", JSON.stringify(updatedTransactions));
+
+    try {
+      await saveTransactions(updatedTransactions);
+    } catch (error) {
+      console.error("Error saving transaction:", error);
+      // Revert the state if saving fails
+      setTransactions(transactions);
+    }
+
     setNewTransaction({
       type: "expense",
       amount: "0.00",
@@ -131,10 +134,19 @@ export default function Home() {
     toast.success("Transaction added successfully!");
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     const updatedTransactions = transactions.filter((t) => t.id !== id);
     setTransactions(updatedTransactions);
-    localStorage.setItem("transactions", JSON.stringify(updatedTransactions));
+
+    try {
+      await saveTransactions(updatedTransactions);
+    } catch (error) {
+      console.error("Error deleting transaction:", error);
+      // Revert the state if saving fails
+      setTransactions(transactions);
+    }
+
+    // Show success toast
     toast.success("Transaction deleted successfully!");
   };
 
@@ -146,6 +158,17 @@ export default function Home() {
     },
     { bill: 0, expense: 0, income: 0 }
   );
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-8 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading transactions...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">

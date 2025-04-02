@@ -2,14 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-
-interface Transaction {
-  id: string;
-  type: "bill" | "expense" | "income";
-  amount: number;
-  description: string;
-  date?: string;
-}
+import { Transaction, loadTransactions } from "@/utils/blob-storage";
 
 export default function MonthlySummary() {
   const [selectedMonth, setSelectedMonth] = useState(() => {
@@ -52,13 +45,18 @@ export default function MonthlySummary() {
   });
 
   useEffect(() => {
-    // Load transactions from localStorage
-    const storedTransactions = localStorage.getItem("transactions");
-    if (storedTransactions) {
-      const parsedTransactions = JSON.parse(storedTransactions);
-      setTransactions(parsedTransactions);
-    }
-    setIsLoading(false);
+    // Load transactions from Blob storage
+    const loadData = async () => {
+      try {
+        const loadedTransactions = await loadTransactions();
+        setTransactions(loadedTransactions);
+      } catch (error) {
+        console.error("Error loading transactions:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadData();
   }, []);
 
   useEffect(() => {
