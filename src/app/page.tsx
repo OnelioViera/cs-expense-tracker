@@ -50,7 +50,7 @@ const descriptionOptions: Record<TransactionType, string[]> = {
     "Alcohol",
     "Other",
   ],
-  income: ["Salary", "Gifts", "Annuity", "Other"],
+  income: ["Salary", "Gifts", "Annuity", "Daniel's Rent", "Other"],
 };
 
 export default function Home() {
