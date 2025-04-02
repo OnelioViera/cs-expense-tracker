@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 interface Transaction {
@@ -19,6 +19,16 @@ export default function MonthlySummary() {
       "0"
     )}`;
   });
+
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+
+  useEffect(() => {
+    // Only access localStorage on the client side
+    const storedTransactions = localStorage.getItem("transactions");
+    if (storedTransactions) {
+      setTransactions(JSON.parse(storedTransactions));
+    }
+  }, []);
 
   const months = [
     { value: "01", label: "January" },
@@ -39,9 +49,6 @@ export default function MonthlySummary() {
     const year = new Date().getFullYear() - 2 + i;
     return year.toString();
   });
-
-  // Get transactions from localStorage
-  const transactions = JSON.parse(localStorage.getItem("transactions") || "[]");
 
   // Filter transactions by selected month
   const monthlyTransactions = transactions.filter(
