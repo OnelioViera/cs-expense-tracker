@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { put, list } from "@vercel/blob";
+import { put } from "@vercel/blob";
 
 const BLOB_STORE_PREFIX = "expense-tracker/";
+const BLOB_STORE_URL = "https://blob.vercel-storage.com";
 
 export async function GET() {
   try {
@@ -9,23 +10,11 @@ export async function GET() {
       throw new Error("BLOB_READ_WRITE_TOKEN is not configured");
     }
 
-    // List all blobs with our prefix
-    const { blobs } = await list({
-      prefix: BLOB_STORE_PREFIX,
-      token: process.env.BLOB_READ_WRITE_TOKEN,
-    });
-
-    // Find our transactions file
-    const transactionsBlob = blobs.find(
-      (blob) => blob.pathname === `${BLOB_STORE_PREFIX}transactions.json`
+    // Fetch directly from the Blob storage URL
+    const response = await fetch(
+      `${BLOB_STORE_URL}/${process.env.BLOB_READ_WRITE_TOKEN}/${BLOB_STORE_PREFIX}transactions.json`
     );
 
-    if (!transactionsBlob) {
-      return NextResponse.json([]);
-    }
-
-    // Fetch the transactions file
-    const response = await fetch(transactionsBlob.url);
     if (!response.ok) {
       return NextResponse.json([]);
     }
