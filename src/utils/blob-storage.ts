@@ -21,7 +21,11 @@ export async function saveTransactions(transactions: Transaction[]) {
     }
 
     const data = await response.json();
-    return data.url;
+    if (!data.success) {
+      throw new Error(data.error || "Failed to save transactions");
+    }
+
+    return data.transactions;
   } catch (error) {
     console.error("Error saving transactions:", error);
     throw error;

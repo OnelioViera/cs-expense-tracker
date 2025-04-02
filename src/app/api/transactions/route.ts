@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { put } from "@vercel/blob";
 
 const BLOB_STORE_PREFIX = "expense-tracker/";
-const BLOB_STORE_URL = "https://blob.vercel-storage.com";
 
 export async function GET() {
   try {
@@ -10,9 +9,14 @@ export async function GET() {
       throw new Error("BLOB_READ_WRITE_TOKEN is not configured");
     }
 
-    // Fetch directly from the Blob storage URL
+    // Fetch from the Blob storage using the token
     const response = await fetch(
-      `${BLOB_STORE_URL}/${process.env.BLOB_READ_WRITE_TOKEN}/${BLOB_STORE_PREFIX}transactions.json`
+      `https://api.vercel.com/v2/blobs/${BLOB_STORE_PREFIX}transactions.json`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}`,
+        },
+      }
     );
 
     if (!response.ok) {
@@ -42,7 +46,13 @@ export async function POST(request: Request) {
         token: process.env.BLOB_READ_WRITE_TOKEN,
       }
     );
-    return NextResponse.json({ success: true, url });
+
+    // Return the transactions data along with the URL
+    return NextResponse.json({
+      success: true,
+      url,
+      transactions,
+    });
   } catch (error) {
     console.error("Error saving transactions:", error);
     return NextResponse.json(

@@ -52,7 +52,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [newTransaction, setNewTransaction] = useState<NewTransaction>({
     type: "expense",
-    amount: "0.00",
+    amount: "",
     description: "",
   });
   const [selectedMonth, setSelectedMonth] = useState(() => {
@@ -84,7 +84,6 @@ export default function Home() {
   });
 
   useEffect(() => {
-    // Load transactions from Blob storage
     const loadData = async () => {
       try {
         const loadedTransactions = await loadTransactions();
@@ -143,7 +142,8 @@ export default function Home() {
     setTransactions(updatedTransactions);
 
     try {
-      await saveTransactions(updatedTransactions);
+      const savedTransactions = await saveTransactions(updatedTransactions);
+      setTransactions(savedTransactions);
       toast.success("Transaction added successfully!");
       setNewTransaction({
         type: "expense",
