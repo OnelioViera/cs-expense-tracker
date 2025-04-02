@@ -21,14 +21,15 @@ export default function MonthlySummary() {
   });
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-
-  useEffect(() => {
-    // Only access localStorage on the client side
-    const storedTransactions = localStorage.getItem("transactions");
-    if (storedTransactions) {
-      setTransactions(JSON.parse(storedTransactions));
-    }
-  }, []);
+  const [monthlyTotals, setMonthlyTotals] = useState({
+    bill: 0,
+    expense: 0,
+    income: 0,
+  });
+  const [bills, setBills] = useState<Transaction[]>([]);
+  const [expenses, setExpenses] = useState<Transaction[]>([]);
+  const [income, setIncome] = useState<Transaction[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const months = [
     { value: "01", label: "January" },
@@ -50,40 +51,64 @@ export default function MonthlySummary() {
     return year.toString();
   });
 
-  // Filter transactions by selected month
-  const monthlyTransactions = transactions.filter(
-    (transaction: Transaction) => {
-      if (!transaction.date) return false;
-      const transactionDate = new Date(transaction.date);
-      const transactionMonth = `${transactionDate.getFullYear()}-${String(
-        transactionDate.getMonth() + 1
-      ).padStart(2, "0")}`;
-      return transactionMonth === selectedMonth;
+  useEffect(() => {
+    // Load transactions from localStorage
+    const storedTransactions = localStorage.getItem("transactions");
+    if (storedTransactions) {
+      const parsedTransactions = JSON.parse(storedTransactions);
+      setTransactions(parsedTransactions);
     }
-  );
+    setIsLoading(false);
+  }, []);
 
-  // Calculate monthly totals
-  const monthlyTotals = monthlyTransactions.reduce(
-    (
-      acc: { bill: number; expense: number; income: number },
-      transaction: Transaction
-    ) => {
-      acc[transaction.type] += transaction.amount;
-      return acc;
-    },
-    { bill: 0, expense: 0, income: 0 }
-  );
+  useEffect(() => {
+    // Filter transactions by selected month
+    const filteredTransactions = transactions.filter(
+      (transaction: Transaction) => {
+        if (!transaction.date) return false;
+        const transactionDate = new Date(transaction.date);
+        const transactionMonth = `${transactionDate.getFullYear()}-${String(
+          transactionDate.getMonth() + 1
+        ).padStart(2, "0")}`;
+        return transactionMonth === selectedMonth;
+      }
+    );
 
-  // Group transactions by type
-  const bills = monthlyTransactions.filter(
-    (t: Transaction) => t.type === "bill"
-  );
-  const expenses = monthlyTransactions.filter(
-    (t: Transaction) => t.type === "expense"
-  );
-  const income = monthlyTransactions.filter(
-    (t: Transaction) => t.type === "income"
-  );
+    // Calculate monthly totals
+    const totals = filteredTransactions.reduce(
+      (
+        acc: { bill: number; expense: number; income: number },
+        transaction: Transaction
+      ) => {
+        acc[transaction.type] += transaction.amount;
+        return acc;
+      },
+      { bill: 0, expense: 0, income: 0 }
+    );
+    setMonthlyTotals(totals);
+
+    // Group transactions by type
+    setBills(
+      filteredTransactions.filter((t: Transaction) => t.type === "bill")
+    );
+    setExpenses(
+      filteredTransactions.filter((t: Transaction) => t.type === "expense")
+    );
+    setIncome(
+      filteredTransactions.filter((t: Transaction) => t.type === "income")
+    );
+  }, [transactions, selectedMonth]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-8 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading transactions...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
