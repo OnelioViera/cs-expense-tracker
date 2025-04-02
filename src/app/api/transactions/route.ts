@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { put, del, list } from "@vercel/blob";
+import { put } from "@vercel/blob";
 
 const BLOB_STORE_PREFIX = "expense-tracker/";
 
