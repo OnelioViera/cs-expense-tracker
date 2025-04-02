@@ -8,6 +8,7 @@ import {
   saveTransactions,
   loadTransactions,
 } from "@/utils/blob-storage";
+import { Receipt, ShoppingCart, DollarSign, Trash2 } from "lucide-react";
 
 interface NewTransaction {
   type: "bill" | "expense" | "income";
@@ -62,6 +63,9 @@ export default function Home() {
       "0"
     )}`;
   });
+  const [filter, setFilter] = useState<"all" | "bill" | "expense" | "income">(
+    "all"
+  );
 
   const months = [
     { value: "01", label: "January" },
@@ -182,6 +186,11 @@ export default function Home() {
     },
     { bill: 0, expense: 0, income: 0 }
   );
+
+  const filteredTransactions = transactions.filter((transaction) => {
+    if (filter === "all") return true;
+    return transaction.type === filter;
+  });
 
   if (isLoading) {
     return (
@@ -621,64 +630,115 @@ export default function Home() {
         </div>
 
         {/* Transactions List */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">
-            Recent Transactions
-          </h2>
-          <div className="space-y-4">
-            {transactions.map((transaction) => (
-              <div
-                key={transaction.id}
-                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg group"
+        <div className="mt-8">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-bold text-gray-800">
+              Recent Transactions
+            </h2>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setFilter("all")}
+                className={`px-3 py-1 rounded-full text-sm font-medium ${
+                  filter === "all"
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
               >
-                <div className="flex-1">
-                  <p className="font-medium text-gray-900">
-                    {transaction.description}
-                  </p>
-                  {transaction.type === "expense" && transaction.date && (
-                    <p className="text-sm text-gray-500">
-                      {new Date(transaction.date).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </p>
-                  )}
+                All
+              </button>
+              <button
+                onClick={() => setFilter("bill")}
+                className={`px-3 py-1 rounded-full text-sm font-medium ${
+                  filter === "bill"
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                Bills
+              </button>
+              <button
+                onClick={() => setFilter("expense")}
+                className={`px-3 py-1 rounded-full text-sm font-medium ${
+                  filter === "expense"
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                Expenses
+              </button>
+              <button
+                onClick={() => setFilter("income")}
+                className={`px-3 py-1 rounded-full text-sm font-medium ${
+                  filter === "income"
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                Income
+              </button>
+            </div>
+          </div>
+          <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="divide-y divide-gray-200">
+              {filteredTransactions.length === 0 ? (
+                <div className="p-4 text-center text-gray-500">
+                  No transactions found
                 </div>
-                <div className="flex items-center gap-4">
-                  <p
-                    className={`font-semibold ${
-                      transaction.type === "income"
-                        ? "text-green-600"
-                        : transaction.type === "expense"
-                        ? "text-red-600"
-                        : "text-blue-600"
-                    }`}
+              ) : (
+                filteredTransactions.map((transaction) => (
+                  <div
+                    key={transaction.id}
+                    className="p-4 flex items-center justify-between hover:bg-gray-50"
                   >
-                    {transaction.type === "income" ? "+" : "-"}$
-                    {transaction.amount.toFixed(2)}
-                  </p>
-                  <button
-                    onClick={() => handleDelete(transaction.id)}
-                    className="p-2 text-gray-400 hover:text-red-600 rounded-full hover:bg-red-50 transition-colors duration-200 opacity-0 group-hover:opacity-100"
-                    aria-label="Delete transaction"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            ))}
+                    <div className="flex items-center space-x-4">
+                      <div
+                        className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                          transaction.type === "bill"
+                            ? "bg-red-100"
+                            : transaction.type === "expense"
+                            ? "bg-yellow-100"
+                            : "bg-green-100"
+                        }`}
+                      >
+                        {transaction.type === "bill" ? (
+                          <Receipt className="w-5 h-5 text-red-600" />
+                        ) : transaction.type === "expense" ? (
+                          <ShoppingCart className="w-5 h-5 text-yellow-600" />
+                        ) : (
+                          <DollarSign className="w-5 h-5 text-green-600" />
+                        )}
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900">
+                          {transaction.description}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          {transaction.date || "No date"}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-4">
+                      <p
+                        className={`font-semibold ${
+                          transaction.type === "income"
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }`}
+                      >
+                        {transaction.type === "income" ? "+" : "-"}$
+                        {transaction.amount.toFixed(2)}
+                      </p>
+                      <button
+                        onClick={() => handleDelete(transaction.id)}
+                        className="text-gray-400 hover:text-red-500"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         </div>
       </div>
