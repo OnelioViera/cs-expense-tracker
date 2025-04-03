@@ -49,7 +49,7 @@ const descriptionOptions: Record<"bill" | "expense" | "income", string[]> = {
     "Gas",
     "Other",
   ],
-  income: ["Salary", "Gifts", "Annuity", "Daniel's Rent", "Other"],
+  income: ["Salary", "Gifts", "Pension", "Daniel's Rent", "Other"],
 };
 
 export default function Home() {
