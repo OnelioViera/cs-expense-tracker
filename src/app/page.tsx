@@ -298,6 +298,38 @@ export default function Home() {
             </p>
           </div>
 
+          {/* Monthly Bills Summary */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="text-xl font-semibold text-gray-800">
+                Monthly Bills
+              </h2>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 text-blue-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+            </div>
+            <p className="text-3xl font-bold text-blue-600">
+              $
+              {transactions
+                .filter(
+                  (t) => t.type === "bill" && t.date?.startsWith(selectedMonth)
+                )
+                .reduce((sum, t) => sum + t.amount, 0)
+                .toFixed(2)}
+            </p>
+          </div>
+
           {/* Expenses Summary */}
           <div className="bg-white rounded-lg shadow-md p-6">
             <div className="flex items-center justify-between mb-2">

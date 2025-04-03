@@ -63,6 +63,10 @@ export default function MonthlySummary() {
     // Filter transactions by selected month
     const filteredTransactions = transactions.filter(
       (transaction: Transaction) => {
+        // For bills, include them all (they don't have dates)
+        if (transaction.type === "bill") return true;
+
+        // For expenses and income, filter by date
         if (!transaction.date) return false;
         const transactionDate = new Date(transaction.date);
         const transactionMonth = `${transactionDate.getFullYear()}-${String(
