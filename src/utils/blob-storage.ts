@@ -6,7 +6,9 @@ export interface Transaction {
   date?: string;
 }
 
-export async function saveTransactions(transactions: Transaction[]) {
+export async function saveTransactions(
+  transactions: Transaction[]
+): Promise<Transaction[]> {
   try {
     const response = await fetch("/api/transactions", {
       method: "POST",
@@ -35,9 +37,11 @@ export async function saveTransactions(transactions: Transaction[]) {
 export async function loadTransactions(): Promise<Transaction[]> {
   try {
     const response = await fetch("/api/transactions");
+
     if (!response.ok) {
       return [];
     }
+
     return await response.json();
   } catch (error) {
     console.error("Error loading transactions:", error);
