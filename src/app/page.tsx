@@ -29,6 +29,7 @@ const descriptionOptions: Record<"bill" | "expense" | "income", string[]> = {
     "Hulu",
     "Netflix",
     "Spotify",
+    "Medical",
   ],
   expense: [
     "Groceries",
@@ -446,15 +447,42 @@ export default function Home() {
                   <option value="" className="text-gray-900">
                     Select a bill type
                   </option>
-                  {descriptionOptions.bill.map((option) => (
-                    <option
-                      key={option}
-                      value={option}
-                      className="text-gray-900"
-                    >
-                      {option}
-                    </option>
-                  ))}
+                  <option value="Utilities" className="text-gray-900">
+                    Utilities
+                  </option>
+                  <option value="Progressive" className="text-gray-900">
+                    Progressive
+                  </option>
+                  <option value="Mint Mobile" className="text-gray-900">
+                    Mint Mobile
+                  </option>
+                  <option value="Internet" className="text-gray-900">
+                    Internet
+                  </option>
+                  <option value="Car Payment" className="text-gray-900">
+                    Car Payment
+                  </option>
+                  <option value="Mortgage" className="text-gray-900">
+                    Mortgage
+                  </option>
+                  <option value="Car Wash" className="text-gray-900">
+                    Car Wash
+                  </option>
+                  <option value="CPAP Supplies" className="text-gray-900">
+                    CPAP Supplies
+                  </option>
+                  <option value="Hulu" className="text-gray-900">
+                    Hulu
+                  </option>
+                  <option value="Netflix" className="text-gray-900">
+                    Netflix
+                  </option>
+                  <option value="Spotify" className="text-gray-900">
+                    Spotify
+                  </option>
+                  <option value="Medical" className="text-gray-900">
+                    Medical
+                  </option>
                 </select>
               </div>
               <button
