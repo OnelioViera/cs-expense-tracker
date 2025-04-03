@@ -8,7 +8,24 @@ import {
   saveTransactions,
   loadTransactions,
 } from "@/utils/blob-storage";
-import { Receipt, ShoppingCart, DollarSign, Trash2 } from "lucide-react";
+import {
+  Receipt,
+  ShoppingCart,
+  DollarSign,
+  Trash2,
+  Utensils,
+  Car,
+  Film,
+  ShoppingBag,
+  Stethoscope,
+  Shirt,
+  Dog,
+  Gift,
+  Wrench,
+  Beer,
+  Fuel,
+  Plus,
+} from "lucide-react";
 
 interface NewTransaction {
   type: "bill" | "expense" | "income";
@@ -560,15 +577,60 @@ export default function Home() {
                   <option value="" className="text-gray-900">
                     Select an expense type
                   </option>
-                  {descriptionOptions.expense.map((option) => (
-                    <option
-                      key={option}
-                      value={option}
-                      className="text-gray-900"
-                    >
-                      {option}
-                    </option>
-                  ))}
+                  {descriptionOptions.expense.map((option) => {
+                    let icon;
+                    switch (option) {
+                      case "Groceries":
+                        icon = <Utensils className="w-4 h-4 inline mr-2" />;
+                        break;
+                      case "Transportation":
+                        icon = <Car className="w-4 h-4 inline mr-2" />;
+                        break;
+                      case "Entertainment":
+                        icon = <Film className="w-4 h-4 inline mr-2" />;
+                        break;
+                      case "Shopping":
+                        icon = <ShoppingBag className="w-4 h-4 inline mr-2" />;
+                        break;
+                      case "Healthcare":
+                        icon = <Stethoscope className="w-4 h-4 inline mr-2" />;
+                        break;
+                      case "Clothes":
+                        icon = <Shirt className="w-4 h-4 inline mr-2" />;
+                        break;
+                      case "Dog Expenses":
+                        icon = <Dog className="w-4 h-4 inline mr-2" />;
+                        break;
+                      case "Holidays":
+                      case "Gifts":
+                        icon = <Gift className="w-4 h-4 inline mr-2" />;
+                        break;
+                      case "Projects":
+                      case "Maintenance":
+                        icon = <Wrench className="w-4 h-4 inline mr-2" />;
+                        break;
+                      case "Alcohol":
+                        icon = <Beer className="w-4 h-4 inline mr-2" />;
+                        break;
+                      case "Gas":
+                        icon = <Fuel className="w-4 h-4 inline mr-2" />;
+                        break;
+                      case "Other":
+                        icon = <Plus className="w-4 h-4 inline mr-2" />;
+                        break;
+                      default:
+                        icon = <ShoppingCart className="w-4 h-4 inline mr-2" />;
+                    }
+                    return (
+                      <option
+                        key={option}
+                        value={option}
+                        className="text-gray-900"
+                      >
+                        {icon} {option}
+                      </option>
+                    );
+                  })}
                 </select>
               </div>
               <button
