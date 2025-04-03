@@ -30,6 +30,7 @@ const descriptionOptions: Record<"bill" | "expense" | "income", string[]> = {
     "Netflix",
     "Spotify",
     "Medical",
+    "Gas",
   ],
   expense: [
     "Groceries",
@@ -44,6 +45,7 @@ const descriptionOptions: Record<"bill" | "expense" | "income", string[]> = {
     "Projects",
     "Maintenance",
     "Alcohol",
+    "Gas",
     "Other",
   ],
   income: ["Salary", "Gifts", "Annuity", "Daniel's Rent", "Other"],
@@ -482,6 +484,9 @@ export default function Home() {
                   </option>
                   <option value="Medical" className="text-gray-900">
                     Medical
+                  </option>
+                  <option value="Gas" className="text-gray-900">
+                    Gas
                   </option>
                 </select>
               </div>
