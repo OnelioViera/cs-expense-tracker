@@ -13,6 +13,8 @@ export default function MonthlySummary() {
     )}`;
   });
 
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [monthlyTotals, setMonthlyTotals] = useState({
     bill: 0,
@@ -23,6 +25,26 @@ export default function MonthlySummary() {
   const [expenses, setExpenses] = useState<Transaction[]>([]);
   const [income, setIncome] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [filteredTransactions, setFilteredTransactions] = useState<
+    Transaction[]
+  >([]);
+
+  const expenseCategories = [
+    "Groceries",
+    "Transportation",
+    "Entertainment",
+    "Shopping",
+    "Healthcare",
+    "Clothes",
+    "Dog Expenses",
+    "Holidays",
+    "Gifts",
+    "Projects",
+    "Maintenance",
+    "Alcohol",
+    "Gas",
+    "Other",
+  ];
 
   const months = [
     { value: "01", label: "January" },
@@ -45,10 +67,10 @@ export default function MonthlySummary() {
   });
 
   useEffect(() => {
-    // Load transactions from Blob storage
     const loadData = async () => {
       try {
         const loadedTransactions = await loadTransactions();
+        console.log("Loaded transactions:", loadedTransactions);
         setTransactions(loadedTransactions);
       } catch (error) {
         console.error("Error loading transactions:", error);
@@ -60,28 +82,27 @@ export default function MonthlySummary() {
   }, []);
 
   useEffect(() => {
-    // Filter transactions by selected month
-    const filteredTransactions = transactions.filter(
-      (transaction: Transaction) => {
-        // For bills, include them all (they don't have dates)
-        if (transaction.type === "bill") return true;
-
-        // For expenses and income, filter by date
-        if (!transaction.date) return false;
-        const transactionDate = new Date(transaction.date);
-        const transactionMonth = `${transactionDate.getFullYear()}-${String(
-          transactionDate.getMonth() + 1
-        ).padStart(2, "0")}`;
-        return transactionMonth === selectedMonth;
+    const [year, month] = selectedMonth.split("-");
+    const filtered = transactions.filter((transaction) => {
+      // Include all bills and income
+      if (transaction.type === "bill" || transaction.type === "income") {
+        return true;
       }
-    );
+      // For expenses, check the date
+      if (transaction.date) {
+        const [transactionYear, transactionMonth] = transaction.date.split("-");
+        return transactionYear === year && transactionMonth === month;
+      }
+      return false;
+    });
+    console.log("Filtered transactions:", filtered);
+    setFilteredTransactions(filtered);
+  }, [transactions, selectedMonth]);
 
+  useEffect(() => {
     // Calculate monthly totals
     const totals = filteredTransactions.reduce(
-      (
-        acc: { bill: number; expense: number; income: number },
-        transaction: Transaction
-      ) => {
+      (acc, transaction) => {
         acc[transaction.type] += transaction.amount;
         return acc;
       },
@@ -90,16 +111,16 @@ export default function MonthlySummary() {
     setMonthlyTotals(totals);
 
     // Group transactions by type
-    setBills(
-      filteredTransactions.filter((t: Transaction) => t.type === "bill")
-    );
+    setBills(filteredTransactions.filter((t) => t.type === "bill"));
     setExpenses(
-      filteredTransactions.filter((t: Transaction) => t.type === "expense")
+      filteredTransactions.filter(
+        (t) =>
+          t.type === "expense" &&
+          (selectedCategory === "all" || t.description === selectedCategory)
+      )
     );
-    setIncome(
-      filteredTransactions.filter((t: Transaction) => t.type === "income")
-    );
-  }, [transactions, selectedMonth]);
+    setIncome(filteredTransactions.filter((t) => t.type === "income"));
+  }, [filteredTransactions, selectedCategory]);
 
   if (isLoading) {
     return (
@@ -313,9 +334,35 @@ export default function MonthlySummary() {
 
           {/* Expenses List */}
           <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
-              Expenses
-            </h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-gray-800">Expenses</h2>
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900 h-10 px-3"
+              >
+                <option value="all">All Categories</option>
+                {expenseCategories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {selectedCategory !== "all" && (
+              <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                <p className="text-sm text-gray-600">
+                  Total for {selectedCategory}:
+                </p>
+                <p className="text-xl font-bold text-red-600">
+                  $
+                  {expenses
+                    .filter((t) => t.description === selectedCategory)
+                    .reduce((sum, t) => sum + t.amount, 0)
+                    .toFixed(2)}
+                </p>
+              </div>
+            )}
             <div className="space-y-4">
               {expenses.map((transaction: Transaction) => (
                 <div
