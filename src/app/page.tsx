@@ -667,116 +667,136 @@ export default function Home() {
         </div>
 
         {/* Transactions List */}
-        <div className="mt-8">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold text-gray-800">
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-semibold text-gray-800">
               Recent Transactions
             </h2>
-            <div className="flex gap-2">
+            <div className="flex items-center gap-2">
               <button
                 onClick={() => setFilter("all")}
-                className={`px-3 py-1 rounded-full text-sm font-medium ${
+                className={`px-4 py-2 rounded-md text-sm font-medium ${
                   filter === "all"
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
                 All
               </button>
               <button
                 onClick={() => setFilter("bill")}
-                className={`px-3 py-1 rounded-full text-sm font-medium ${
+                className={`px-4 py-2 rounded-md text-sm font-medium ${
                   filter === "bill"
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
                 Bills
               </button>
               <button
                 onClick={() => setFilter("expense")}
-                className={`px-3 py-1 rounded-full text-sm font-medium ${
+                className={`px-4 py-2 rounded-md text-sm font-medium ${
                   filter === "expense"
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
                 Expenses
               </button>
               <button
                 onClick={() => setFilter("income")}
-                className={`px-3 py-1 rounded-full text-sm font-medium ${
+                className={`px-4 py-2 rounded-md text-sm font-medium ${
                   filter === "income"
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
                 Income
               </button>
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow overflow-hidden">
-            <div className="divide-y divide-gray-200">
-              {filteredTransactions.length === 0 ? (
-                <div className="p-4 text-center text-gray-500">
-                  No transactions found
-                </div>
-              ) : (
-                filteredTransactions.map((transaction) => (
-                  <div
-                    key={transaction.id}
-                    className="p-4 flex items-center justify-between hover:bg-gray-50"
-                  >
-                    <div className="flex items-center space-x-4">
-                      <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                          transaction.type === "bill"
-                            ? "bg-red-100"
-                            : transaction.type === "expense"
-                            ? "bg-yellow-100"
-                            : "bg-green-100"
-                        }`}
-                      >
-                        {transaction.type === "bill" ? (
-                          <Receipt className="w-5 h-5 text-red-600" />
-                        ) : transaction.type === "expense" ? (
-                          <ShoppingCart className="w-5 h-5 text-yellow-600" />
-                        ) : (
-                          <DollarSign className="w-5 h-5 text-green-600" />
-                        )}
-                      </div>
-                      <div>
-                        <p className="font-medium text-gray-900">
-                          {transaction.description}
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          {transaction.date || "No date"}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                      <p
-                        className={`font-semibold ${
-                          transaction.type === "income"
-                            ? "text-green-600"
-                            : "text-red-600"
-                        }`}
-                      >
-                        {transaction.type === "income" ? "+" : "-"}$
-                        {transaction.amount.toFixed(2)}
-                      </p>
-                      <button
-                        onClick={() => handleDelete(transaction.id)}
-                        className="text-gray-400 hover:text-red-500"
-                      >
-                        <Trash2 className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </div>
-                ))
-              )}
+
+          {/* Filtered Totals */}
+          {filter !== "all" && (
+            <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                {filter.charAt(0).toUpperCase() + filter.slice(1)} Total
+              </h3>
+              <p
+                className={`text-2xl font-bold ${
+                  filter === "income"
+                    ? "text-green-600"
+                    : filter === "bill"
+                    ? "text-blue-600"
+                    : "text-red-600"
+                }`}
+              >
+                $
+                {filteredTransactions
+                  .reduce((sum, t) => sum + t.amount, 0)
+                  .toFixed(2)}
+              </p>
             </div>
-          </div>
+          )}
+
+          {filteredTransactions.length === 0 ? (
+            <div className="p-4 text-center text-gray-500">
+              No transactions found
+            </div>
+          ) : (
+            filteredTransactions.map((transaction) => (
+              <div
+                key={transaction.id}
+                className="p-4 flex items-center justify-between hover:bg-gray-50"
+              >
+                <div className="flex items-center space-x-4">
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                      transaction.type === "bill"
+                        ? "bg-red-100"
+                        : transaction.type === "expense"
+                        ? "bg-yellow-100"
+                        : "bg-green-100"
+                    }`}
+                  >
+                    {transaction.type === "bill" ? (
+                      <Receipt className="w-5 h-5 text-red-600" />
+                    ) : transaction.type === "expense" ? (
+                      <ShoppingCart className="w-5 h-5 text-yellow-600" />
+                    ) : (
+                      <DollarSign className="w-5 h-5 text-green-600" />
+                    )}
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">
+                      {transaction.description}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {transaction.date || "No date"}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <p
+                    className={`font-semibold ${
+                      transaction.type === "income"
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }`}
+                  >
+                    {transaction.type === "income" ? "+" : "-"}$
+                    {transaction.amount.toFixed(2)}
+                  </p>
+                  <button
+                    onClick={() => handleDelete(transaction.id)}
+                    className="text-gray-400 hover:text-red-500"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>
