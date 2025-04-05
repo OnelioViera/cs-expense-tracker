@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Transaction, loadTransactions } from "@/utils/blob-storage";
+import { Receipt } from "lucide-react";
 
 export default function MonthlySummary() {
   const [selectedMonth, setSelectedMonth] = useState(() => {
@@ -147,37 +148,65 @@ export default function MonthlySummary() {
                 View your transactions and totals for each month
               </p>
             </div>
-            <div className="flex items-center gap-4">
-              <select
-                value={selectedMonth.split("-")[1]}
-                onChange={(e) =>
-                  setSelectedMonth(
-                    `${selectedMonth.split("-")[0]}-${e.target.value}`
-                  )
-                }
-                className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900 h-10 px-3"
-              >
-                {months.map((month) => (
-                  <option key={month.value} value={month.value}>
-                    {month.label}
-                  </option>
-                ))}
-              </select>
-              <select
-                value={selectedMonth.split("-")[0]}
-                onChange={(e) =>
-                  setSelectedMonth(
-                    `${e.target.value}-${selectedMonth.split("-")[1]}`
-                  )
-                }
-                className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900 h-10 px-3"
-              >
-                {years.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-4">
+                <select
+                  value={selectedMonth.split("-")[1]}
+                  onChange={(e) =>
+                    setSelectedMonth(
+                      `${selectedMonth.split("-")[0]}-${e.target.value}`
+                    )
+                  }
+                  className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900 h-10 px-3"
+                >
+                  {months.map((month) => (
+                    <option key={month.value} value={month.value}>
+                      {month.label}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={selectedMonth.split("-")[0]}
+                  onChange={(e) =>
+                    setSelectedMonth(
+                      `${e.target.value}-${selectedMonth.split("-")[1]}`
+                    )
+                  }
+                  className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900 h-10 px-3"
+                >
+                  {years.map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex items-center gap-4 border-l border-gray-200 pl-6">
+                <Link
+                  href="/transactions"
+                  className="inline-flex items-center text-blue-600 hover:text-blue-800"
+                >
+                  <Receipt className="h-5 w-5 mr-2" />
+                  Transactions
+                </Link>
+                <Link
+                  href="/"
+                  className="inline-flex items-center text-blue-600 hover:text-blue-800"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
+                    />
+                  </svg>
+                  Dashboard
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -330,6 +359,16 @@ export default function MonthlySummary() {
                 </div>
               ))}
             </div>
+            <div className="mt-6 pt-4 border-t border-gray-200">
+              <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                <p className="text-sm font-medium text-gray-600">
+                  Total Bills:
+                </p>
+                <p className="text-lg font-bold text-blue-600">
+                  ${bills.reduce((sum, t) => sum + t.amount, 0).toFixed(2)}
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Expenses List */}
@@ -386,6 +425,16 @@ export default function MonthlySummary() {
                 </div>
               ))}
             </div>
+            <div className="mt-6 pt-4 border-t border-gray-200">
+              <div className="flex justify-between items-center p-3 bg-red-50 rounded-lg">
+                <p className="text-sm font-medium text-gray-600">
+                  Total Expenses:
+                </p>
+                <p className="text-lg font-bold text-red-600">
+                  ${expenses.reduce((sum, t) => sum + t.amount, 0).toFixed(2)}
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Income List */}
@@ -406,29 +455,17 @@ export default function MonthlySummary() {
                 </div>
               ))}
             </div>
+            <div className="mt-6 pt-4 border-t border-gray-200">
+              <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                <p className="text-sm font-medium text-gray-600">
+                  Total Income:
+                </p>
+                <p className="text-lg font-bold text-green-600">
+                  ${income.reduce((sum, t) => sum + t.amount, 0).toFixed(2)}
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
-
-        {/* Back to Home Link */}
-        <div className="mt-8">
-          <Link
-            href="/"
-            className="inline-flex items-center text-blue-600 hover:text-blue-800"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-2"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-            Back to Expense Tracker
-          </Link>
         </div>
       </div>
     </div>

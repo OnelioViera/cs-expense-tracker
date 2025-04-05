@@ -8,7 +8,13 @@ import {
   saveTransactions,
   loadTransactions,
 } from "@/utils/blob-storage";
-import { Receipt, ShoppingCart, DollarSign, Trash2 } from "lucide-react";
+import {
+  Receipt,
+  ShoppingCart,
+  DollarSign,
+  Trash2,
+  Calendar,
+} from "lucide-react";
 
 interface NewTransaction {
   type: "bill" | "expense" | "income";
@@ -116,12 +122,12 @@ export default function Transactions() {
       .includes("bill")
       ? "bill"
       : submitButton
-          ?.closest(".bg-white")
-          ?.querySelector("h2")
-          ?.textContent?.toLowerCase()
-          .includes("income")
-      ? "income"
-      : "expense";
+            ?.closest(".bg-white")
+            ?.querySelector("h2")
+            ?.textContent?.toLowerCase()
+            .includes("income")
+        ? "income"
+        : "expense";
 
     // Validate amount
     if (!newTransaction.amount || newTransaction.amount === "0.00") {
@@ -211,61 +217,76 @@ export default function Transactions() {
     <div className="min-h-screen bg-gray-50 p-8">
       <Toaster position="top-center" />
       <div className="max-w-7xl mx-auto">
-        {/* Month Selector */}
+        {/* Header */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-gray-900">
-              Expense Tracker
-            </h1>
-            <div className="flex items-center gap-4">
-              <Link
-                href="/monthly"
-                className="inline-flex items-center text-blue-600 hover:text-blue-800"
-              >
-                Monthly Summary
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 ml-2"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Expense Tracker
+              </h1>
+              <p className="text-gray-600 mt-1">
+                Add and manage your transactions
+              </p>
+            </div>
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-4">
+                <select
+                  value={selectedMonth.split("-")[1]}
+                  onChange={(e) =>
+                    setSelectedMonth(
+                      `${selectedMonth.split("-")[0]}-${e.target.value}`
+                    )
+                  }
+                  className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900 h-10 px-3"
                 >
-                  <path
-                    fillRule="evenodd"
-                    d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </Link>
-              <select
-                value={selectedMonth.split("-")[1]}
-                onChange={(e) =>
-                  setSelectedMonth(
-                    `${selectedMonth.split("-")[0]}-${e.target.value}`
-                  )
-                }
-                className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900 h-10 px-3"
-              >
-                {months.map((month) => (
-                  <option key={month.value} value={month.value}>
-                    {month.label}
-                  </option>
-                ))}
-              </select>
-              <select
-                value={selectedMonth.split("-")[0]}
-                onChange={(e) =>
-                  setSelectedMonth(
-                    `${e.target.value}-${selectedMonth.split("-")[1]}`
-                  )
-                }
-                className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900 h-10 px-3"
-              >
-                {years.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
+                  {months.map((month) => (
+                    <option key={month.value} value={month.value}>
+                      {month.label}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={selectedMonth.split("-")[0]}
+                  onChange={(e) =>
+                    setSelectedMonth(
+                      `${e.target.value}-${selectedMonth.split("-")[1]}`
+                    )
+                  }
+                  className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900 h-10 px-3"
+                >
+                  {years.map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex items-center gap-4 border-l border-gray-200 pl-6">
+                <Link
+                  href="/monthly"
+                  className="inline-flex items-center text-blue-600 hover:text-blue-800"
+                >
+                  <Calendar className="h-5 w-5 mr-2" />
+                  Monthly Summary
+                </Link>
+                <Link
+                  href="/"
+                  className="inline-flex items-center text-blue-600 hover:text-blue-800"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
+                    />
+                  </svg>
+                  Dashboard
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -690,8 +711,8 @@ export default function Transactions() {
                   filter === "income"
                     ? "text-green-600"
                     : filter === "bill"
-                    ? "text-blue-600"
-                    : "text-red-600"
+                      ? "text-blue-600"
+                      : "text-red-600"
                 }`}
               >
                 $
@@ -744,8 +765,8 @@ export default function Transactions() {
                         transaction.type === "income"
                           ? "text-green-600"
                           : transaction.type === "bill"
-                          ? "text-blue-600"
-                          : "text-red-600"
+                            ? "text-blue-600"
+                            : "text-red-600"
                       }`}
                     >
                       ${transaction.amount.toFixed(2)}

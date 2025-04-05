@@ -85,20 +85,29 @@ export default function Dashboard() {
   );
 
   // Calculate monthly totals for the line chart
-  const monthlyTotals = months.reduce((acc, month) => {
-    const monthTransactions = transactions.filter((t) =>
-      t.date?.startsWith(`${selectedMonth.split("-")[0]}-${month.value}`)
-    );
-    acc[month.label] = monthTransactions.reduce((sum, t) => sum + t.amount, 0);
-    return acc;
-  }, {} as Record<string, number>);
+  const monthlyTotals = months.reduce(
+    (acc, month) => {
+      const monthTransactions = transactions.filter((t) =>
+        t.date?.startsWith(`${selectedMonth.split("-")[0]}-${month.value}`)
+      );
+      acc[month.label] = monthTransactions.reduce(
+        (sum, t) => sum + t.amount,
+        0
+      );
+      return acc;
+    },
+    {} as Record<string, number>
+  );
 
   // Calculate category totals for the doughnut chart
-  const categoryTotals = transactions.reduce((acc, transaction) => {
-    acc[transaction.description] =
-      (acc[transaction.description] || 0) + transaction.amount;
-    return acc;
-  }, {} as Record<string, number>);
+  const categoryTotals = transactions.reduce(
+    (acc, transaction) => {
+      acc[transaction.description] =
+        (acc[transaction.description] || 0) + transaction.amount;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
 
   // Prepare chart data
   const lineChartData = {
@@ -189,34 +198,28 @@ export default function Dashboard() {
         {/* Header */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-gray-900">
-              Expense Tracker Dashboard
-            </h1>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Expense Tracker Dashboard
+              </h1>
+              <p className="text-gray-600 mt-1">
+                Track your expenses and income
+              </p>
+            </div>
             <div className="flex items-center gap-4">
               <Link
                 href="/transactions"
                 className="inline-flex items-center text-blue-600 hover:text-blue-800"
               >
+                <Receipt className="h-5 w-5 mr-2" />
                 Transactions
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 ml-2"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  />
-                </svg>
               </Link>
               <Link
                 href="/monthly"
                 className="inline-flex items-center text-blue-600 hover:text-blue-800"
               >
+                <Calendar className="h-5 w-5 mr-2" />
                 Monthly Summary
-                <Calendar className="h-5 w-5 ml-2" />
               </Link>
               <select
                 value={selectedMonth.split("-")[1]}
