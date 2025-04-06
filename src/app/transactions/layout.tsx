@@ -2,6 +2,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Transactions | Expense Tracker",
+  description: "Add and manage your transactions",
 };
 
 export default function TransactionsLayout({
@@ -9,5 +10,5 @@ export default function TransactionsLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return children;
 }
