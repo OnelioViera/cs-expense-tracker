@@ -11,4 +11,4 @@ export default function TransactionsLayout({
   children: React.ReactNode;
 }) {
   return children;
-}
+} 

@@ -11,4 +11,4 @@ export default function MonthlyLayout({
   children: React.ReactNode;
 }) {
   return children;
-}
+} 
