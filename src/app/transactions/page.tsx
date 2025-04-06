@@ -63,9 +63,8 @@ const descriptionOptions: Record<"bill" | "expense" | "income", string[]> = {
     "Chick-fil-A",
     "Starbucks",
     "Google One",
-    
   ],
-  income: ["Salary", "Gifts", "Pension", "Daniel's Rent", "Other"],
+  income: ["Salary", "Gifts", "Pension", "Daniel's Rent", "NuVet", "Other"],
 };
 
 export default function Transactions() {
