@@ -15,6 +15,7 @@ import {
   Trash2,
   Calendar,
 } from "lucide-react";
+import { Metadata } from "next";
 
 interface NewTransaction {
   type: "bill" | "expense" | "income";
@@ -58,6 +59,10 @@ const descriptionOptions: Record<"bill" | "expense" | "income", string[]> = {
     "Other",
   ],
   income: ["Salary", "Gifts", "Pension", "Daniel's Rent", "Other"],
+};
+
+export const metadata: Metadata = {
+  title: "Transactions | Expense Tracker",
 };
 
 export default function Transactions() {

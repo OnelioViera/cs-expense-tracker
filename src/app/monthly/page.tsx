@@ -4,6 +4,11 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Transaction, loadTransactions } from "@/utils/blob-storage";
 import { Receipt } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Monthly Summary | Expense Tracker",
+};
 
 export default function MonthlySummary() {
   const [selectedMonth, setSelectedMonth] = useState(() => {
