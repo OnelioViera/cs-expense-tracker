@@ -53,6 +53,8 @@ const descriptionOptions: Record<"bill" | "expense" | "income", string[]> = {
     "Maintenance",
     "Alcohol",
     "Gas",
+    "Chick-fil-A",
+    "Starbucks",
     "Other",
   ],
   income: ["Salary", "Gifts", "Pension", "Daniel's Rent", "Other"],
