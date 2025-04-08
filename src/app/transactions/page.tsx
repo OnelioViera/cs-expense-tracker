@@ -25,7 +25,7 @@ interface NewTransaction {
 const descriptionOptions: Record<"bill" | "expense" | "income", string[]> = {
   bill: [
     "Utilities",
-    "Progressive",
+    "State Farm",
     "Mint Mobile",
     "Internet",
     "Car Payment",
@@ -38,6 +38,7 @@ const descriptionOptions: Record<"bill" | "expense" | "income", string[]> = {
     "Medical",
     "Gas",
     "Car Insurance",
+    "Post Office",
   ],
   expense: [
     "Groceries",
@@ -63,6 +64,7 @@ const descriptionOptions: Record<"bill" | "expense" | "income", string[]> = {
     "Chick-fil-A",
     "Starbucks",
     "Google One",
+
   ],
   income: ["Salary", "Gifts", "Pension", "Daniel's Rent", "NuVet", "Other"],
 };
