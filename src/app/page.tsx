@@ -84,19 +84,37 @@ export default function Dashboard() {
     { bill: 0, expense: 0, income: 0 }
   );
 
+  // Convert income from cents to dollars
+  const incomeInDollars = totals.income / 100;
+
   // Calculate monthly totals for the line chart
   const monthlyTotals = months.reduce(
     (acc, month) => {
-      const monthTransactions = transactions.filter((t) =>
-        t.date?.startsWith(`${selectedMonth.split("-")[0]}-${month.value}`)
-      );
-      acc[month.label] = monthTransactions.reduce(
-        (sum, t) => sum + t.amount,
-        0
-      );
+      const monthTransactions = transactions.filter((t) => {
+        // For expenses, check the date
+        if (t.type === "expense" && t.date) {
+          return t.date.startsWith(
+            `${selectedMonth.split("-")[0]}-${month.value}`
+          );
+        }
+        // For bills and income, include them in all months
+        return t.type === "bill" || t.type === "income";
+      });
+
+      acc[month.label] = {
+        expense: monthTransactions
+          .filter((t) => t.type === "expense")
+          .reduce((sum, t) => sum + t.amount, 0),
+        bill: monthTransactions
+          .filter((t) => t.type === "bill")
+          .reduce((sum, t) => sum + t.amount, 0),
+        income: monthTransactions
+          .filter((t) => t.type === "income")
+          .reduce((sum, t) => sum + t.amount, 0),
+      };
       return acc;
     },
-    {} as Record<string, number>
+    {} as Record<string, { expense: number; bill: number; income: number }>
   );
 
   // Calculate category totals for the doughnut chart
@@ -115,9 +133,23 @@ export default function Dashboard() {
     datasets: [
       {
         label: "Monthly Expenses",
-        data: months.map((m) => monthlyTotals[m.label] || 0),
+        data: months.map((m) => monthlyTotals[m.label]?.expense || 0),
         borderColor: "rgb(239, 68, 68)",
         backgroundColor: "rgba(239, 68, 68, 0.5)",
+        tension: 0.3,
+      },
+      {
+        label: "Total Bills",
+        data: months.map((m) => monthlyTotals[m.label]?.bill || 0),
+        borderColor: "rgb(59, 130, 246)",
+        backgroundColor: "rgba(59, 130, 246, 0.5)",
+        tension: 0.3,
+      },
+      {
+        label: "Total Income",
+        data: months.map((m) => monthlyTotals[m.label]?.income || 0),
+        borderColor: "rgb(34, 197, 94)",
+        backgroundColor: "rgba(34, 197, 94, 0.5)",
         tension: 0.3,
       },
     ],
@@ -172,7 +204,42 @@ export default function Dashboard() {
     ],
   };
 
-  const chartOptions = {
+  const lineChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "bottom" as const,
+      },
+    },
+    scales: {
+      y: {
+        min: 0,
+        max: Math.ceil(incomeInDollars / 500) * 500, // Use income in dollars
+        ticks: {
+          stepSize: 500,
+          callback: function (value: string | number) {
+            const numValue =
+              typeof value === "string" ? parseFloat(value) : value;
+            if (numValue % 500 === 0) {
+              return `$${numValue}`;
+            }
+            return "";
+          },
+        },
+      },
+    },
+  };
+
+  const barChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "bottom" as const,
+      },
+    },
+  };
+
+  const doughnutChartOptions = {
     responsive: true,
     plugins: {
       legend: {
@@ -324,7 +391,7 @@ export default function Dashboard() {
               Monthly Expenses Trend
             </h2>
             <div className="h-80">
-              <Line data={lineChartData} options={chartOptions} />
+              <Line data={lineChartData} options={lineChartOptions} />
             </div>
           </div>
 
@@ -334,7 +401,10 @@ export default function Dashboard() {
               Category Distribution
             </h2>
             <div className="h-80">
-              <Doughnut data={doughnutChartData} options={chartOptions} />
+              <Doughnut
+                data={doughnutChartData}
+                options={doughnutChartOptions}
+              />
             </div>
           </div>
         </div>
@@ -345,7 +415,7 @@ export default function Dashboard() {
             Transaction Types Overview
           </h2>
           <div className="h-80">
-            <Bar data={barChartData} options={chartOptions} />
+            <Bar data={barChartData} options={barChartOptions} />
           </div>
         </div>
       </div>
