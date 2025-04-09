@@ -39,6 +39,7 @@ const descriptionOptions: Record<"bill" | "expense" | "income", string[]> = {
     "Gas",
     "Car Insurance",
     "Post Office",
+    "Apple Storage",
   ],
   expense: [
     "Groceries",
@@ -65,7 +66,6 @@ const descriptionOptions: Record<"bill" | "expense" | "income", string[]> = {
     "Starbucks",
     "Google One",
     "Dog Expenses",
-    "Apple Storage",
   ],
   income: ["Salary", "Gifts", "Pension", "Daniel's Rent", "NuVet", "Other"],
 };
