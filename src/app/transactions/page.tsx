@@ -67,6 +67,7 @@ const descriptionOptions: Record<"bill" | "expense" | "income", string[]> = {
     "Google One",
     "Dog Expenses",
     "Cursor",
+    "Microsoft, Annualy",
     "Annual Expenses",
   ],
   income: ["Salary", "Gifts", "Pension", "Daniel's Rent", "NuVet", "Other"],
