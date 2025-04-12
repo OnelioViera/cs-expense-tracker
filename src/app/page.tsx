@@ -13,6 +13,9 @@ import {
   Title,
   Tooltip,
   Legend,
+  ChartOptions,
+  TooltipItem,
+  TooltipModel,
 } from "chart.js";
 import { Line, Bar, Doughnut } from "react-chartjs-2";
 import { Transaction, loadTransactions } from "@/utils/blob-storage";
@@ -35,10 +38,7 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedMonth, setSelectedMonth] = useState(() => {
     const now = new Date();
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
-      2,
-      "0"
-    )}`;
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
   });
 
   const months = [
@@ -249,7 +249,7 @@ export default function Dashboard() {
     },
   };
 
-  const barChartOptions = {
+  const barChartOptions: ChartOptions<"bar"> = {
     responsive: true,
     plugins: {
       legend: {
@@ -257,15 +257,19 @@ export default function Dashboard() {
       },
       tooltip: {
         callbacks: {
-          label: function (context: any) {
-            return `$${context.raw.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+          label: function (
+            this: TooltipModel<"bar">,
+            tooltipItem: TooltipItem<"bar">
+          ) {
+            const value = tooltipItem.raw as number;
+            return `$${value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
           },
         },
       },
     },
   };
 
-  const doughnutChartOptions = {
+  const doughnutChartOptions: ChartOptions<"doughnut"> = {
     responsive: true,
     plugins: {
       legend: {
@@ -273,8 +277,12 @@ export default function Dashboard() {
       },
       tooltip: {
         callbacks: {
-          label: function (context: any) {
-            return `$${context.raw.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+          label: function (
+            this: TooltipModel<"doughnut">,
+            tooltipItem: TooltipItem<"doughnut">
+          ) {
+            const value = tooltipItem.raw as number;
+            return `$${value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
           },
         },
       },
