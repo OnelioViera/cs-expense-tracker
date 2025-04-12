@@ -123,6 +123,14 @@ export default function MonthlySummary() {
     setIncome(filteredTransactions.filter((t) => t.type === "income"));
   }, [filteredTransactions, selectedCategory]);
 
+  // Format number with commas
+  const formatNumber = (num: number) => {
+    return num.toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 p-8 flex items-center justify-center">
@@ -148,65 +156,61 @@ export default function MonthlySummary() {
                 View your transactions and totals for each month
               </p>
             </div>
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-4">
-                <select
-                  value={selectedMonth.split("-")[1]}
-                  onChange={(e) =>
-                    setSelectedMonth(
-                      `${selectedMonth.split("-")[0]}-${e.target.value}`
-                    )
-                  }
-                  className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900 h-10 px-3"
+            <div className="flex items-center gap-4">
+              <select
+                value={selectedMonth.split("-")[1]}
+                onChange={(e) =>
+                  setSelectedMonth(
+                    `${selectedMonth.split("-")[0]}-${e.target.value}`
+                  )
+                }
+                className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900 h-10 px-3"
+              >
+                {months.map((month) => (
+                  <option key={month.value} value={month.value}>
+                    {month.label}
+                  </option>
+                ))}
+              </select>
+              <select
+                value={selectedMonth.split("-")[0]}
+                onChange={(e) =>
+                  setSelectedMonth(
+                    `${e.target.value}-${selectedMonth.split("-")[1]}`
+                  )
+                }
+                className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900 h-10 px-3"
+              >
+                {years.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+              <Link
+                href="/transactions"
+                className="inline-flex items-center text-blue-600 hover:text-blue-800"
+              >
+                <Receipt className="h-5 w-5 mr-2" />
+                Transactions
+              </Link>
+              <Link
+                href="/"
+                className="inline-flex items-center text-blue-600 hover:text-blue-800"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 mr-2"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
                 >
-                  {months.map((month) => (
-                    <option key={month.value} value={month.value}>
-                      {month.label}
-                    </option>
-                  ))}
-                </select>
-                <select
-                  value={selectedMonth.split("-")[0]}
-                  onChange={(e) =>
-                    setSelectedMonth(
-                      `${e.target.value}-${selectedMonth.split("-")[1]}`
-                    )
-                  }
-                  className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900 h-10 px-3"
-                >
-                  {years.map((year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex items-center gap-4 border-l border-gray-200 pl-6">
-                <Link
-                  href="/transactions"
-                  className="inline-flex items-center text-blue-600 hover:text-blue-800"
-                >
-                  <Receipt className="h-5 w-5 mr-2" />
-                  Transactions
-                </Link>
-                <Link
-                  href="/"
-                  className="inline-flex items-center text-blue-600 hover:text-blue-800"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 mr-2"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
-                    />
-                  </svg>
-                  Dashboard
-                </Link>
-              </div>
+                  <path
+                    fillRule="evenodd"
+                    d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
+                  />
+                </svg>
+                Dashboard
+              </Link>
             </div>
           </div>
         </div>
@@ -235,7 +239,7 @@ export default function MonthlySummary() {
               </svg>
             </div>
             <p className="text-3xl font-bold text-blue-600">
-              ${monthlyTotals.bill.toFixed(2)}
+              ${formatNumber(monthlyTotals.bill)}
             </p>
           </div>
 
@@ -261,7 +265,7 @@ export default function MonthlySummary() {
               </svg>
             </div>
             <p className="text-3xl font-bold text-red-600">
-              ${monthlyTotals.expense.toFixed(2)}
+              ${formatNumber(monthlyTotals.expense)}
             </p>
           </div>
 
@@ -287,7 +291,7 @@ export default function MonthlySummary() {
               </svg>
             </div>
             <p className="text-3xl font-bold text-green-600">
-              ${monthlyTotals.income.toFixed(2)}
+              ${formatNumber(monthlyTotals.income)}
             </p>
           </div>
 
@@ -330,11 +334,11 @@ export default function MonthlySummary() {
               }`}
             >
               $
-              {(
+              {formatNumber(
                 monthlyTotals.income -
-                monthlyTotals.expense -
-                monthlyTotals.bill
-              ).toFixed(2)}
+                  monthlyTotals.expense -
+                  monthlyTotals.bill
+              )}
             </p>
           </div>
         </div>
@@ -354,7 +358,7 @@ export default function MonthlySummary() {
                     {transaction.description}
                   </p>
                   <p className="font-semibold text-blue-600">
-                    ${transaction.amount.toFixed(2)}
+                    ${formatNumber(transaction.amount)}
                   </p>
                 </div>
               ))}
@@ -365,7 +369,7 @@ export default function MonthlySummary() {
                   Total Bills:
                 </p>
                 <p className="text-lg font-bold text-blue-600">
-                  ${bills.reduce((sum, t) => sum + t.amount, 0).toFixed(2)}
+                  ${formatNumber(bills.reduce((sum, t) => sum + t.amount, 0))}
                 </p>
               </div>
             </div>
@@ -395,10 +399,11 @@ export default function MonthlySummary() {
                 </p>
                 <p className="text-xl font-bold text-red-600">
                   $
-                  {expenses
-                    .filter((t) => t.description === selectedCategory)
-                    .reduce((sum, t) => sum + t.amount, 0)
-                    .toFixed(2)}
+                  {formatNumber(
+                    expenses
+                      .filter((t) => t.description === selectedCategory)
+                      .reduce((sum, t) => sum + t.amount, 0)
+                  )}
                 </p>
               </div>
             )}
@@ -420,7 +425,7 @@ export default function MonthlySummary() {
                     </p>
                   </div>
                   <p className="font-semibold text-red-600">
-                    ${transaction.amount.toFixed(2)}
+                    ${formatNumber(transaction.amount)}
                   </p>
                 </div>
               ))}
@@ -431,7 +436,8 @@ export default function MonthlySummary() {
                   Total Expenses:
                 </p>
                 <p className="text-lg font-bold text-red-600">
-                  ${expenses.reduce((sum, t) => sum + t.amount, 0).toFixed(2)}
+                  $
+                  {formatNumber(expenses.reduce((sum, t) => sum + t.amount, 0))}
                 </p>
               </div>
             </div>
@@ -450,7 +456,7 @@ export default function MonthlySummary() {
                     {transaction.description}
                   </p>
                   <p className="font-semibold text-green-600">
-                    ${transaction.amount.toFixed(2)}
+                    ${formatNumber(transaction.amount)}
                   </p>
                 </div>
               ))}
@@ -461,7 +467,7 @@ export default function MonthlySummary() {
                   Total Income:
                 </p>
                 <p className="text-lg font-bold text-green-600">
-                  ${income.reduce((sum, t) => sum + t.amount, 0).toFixed(2)}
+                  ${formatNumber(income.reduce((sum, t) => sum + t.amount, 0))}
                 </p>
               </div>
             </div>

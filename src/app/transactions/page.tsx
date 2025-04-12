@@ -218,6 +218,14 @@ export default function Transactions() {
     return transaction.type === filter;
   });
 
+  // Format number with commas
+  const formatNumber = (num: number) => {
+    return num.toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 p-8 flex items-center justify-center">
@@ -331,7 +339,7 @@ export default function Transactions() {
               </svg>
             </div>
             <p className="text-3xl font-bold text-blue-600">
-              ${totals.bill.toFixed(2)}
+              ${formatNumber(totals.bill)}
             </p>
           </div>
 
@@ -358,12 +366,14 @@ export default function Transactions() {
             </div>
             <p className="text-3xl font-bold text-blue-600">
               $
-              {transactions
-                .filter(
-                  (t) => t.type === "bill" && t.date?.startsWith(selectedMonth)
-                )
-                .reduce((sum, t) => sum + t.amount, 0)
-                .toFixed(2)}
+              {formatNumber(
+                transactions
+                  .filter(
+                    (t) =>
+                      t.type === "bill" && t.date?.startsWith(selectedMonth)
+                  )
+                  .reduce((sum, t) => sum + t.amount, 0)
+              )}
             </p>
           </div>
 
@@ -389,7 +399,7 @@ export default function Transactions() {
               </svg>
             </div>
             <p className="text-3xl font-bold text-red-600">
-              ${totals.expense.toFixed(2)}
+              ${formatNumber(totals.expense)}
             </p>
           </div>
 
@@ -415,7 +425,7 @@ export default function Transactions() {
               </svg>
             </div>
             <p className="text-3xl font-bold text-green-600">
-              ${totals.income.toFixed(2)}
+              ${formatNumber(totals.income)}
             </p>
           </div>
         </div>
@@ -732,9 +742,9 @@ export default function Transactions() {
                 }`}
               >
                 $
-                {filteredTransactions
-                  .reduce((sum, t) => sum + t.amount, 0)
-                  .toFixed(2)}
+                {formatNumber(
+                  filteredTransactions.reduce((sum, t) => sum + t.amount, 0)
+                )}
               </p>
             </div>
           )}
@@ -785,7 +795,7 @@ export default function Transactions() {
                             : "text-red-600"
                       }`}
                     >
-                      ${transaction.amount.toFixed(2)}
+                      ${formatNumber(transaction.amount)}
                     </p>
                     <button
                       onClick={() => handleDelete(transaction.id)}

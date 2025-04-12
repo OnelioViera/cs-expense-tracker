@@ -240,7 +240,7 @@ export default function Dashboard() {
             const numValue =
               typeof value === "string" ? parseFloat(value) : value;
             if (numValue % 100 === 0) {
-              return `$${numValue}`;
+              return `$${numValue.toLocaleString("en-US")}`;
             }
             return "";
           },
@@ -255,6 +255,13 @@ export default function Dashboard() {
       legend: {
         position: "bottom" as const,
       },
+      tooltip: {
+        callbacks: {
+          label: function (context: any) {
+            return `$${context.raw.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+          },
+        },
+      },
     },
   };
 
@@ -264,7 +271,22 @@ export default function Dashboard() {
       legend: {
         position: "bottom" as const,
       },
+      tooltip: {
+        callbacks: {
+          label: function (context: any) {
+            return `$${context.raw.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+          },
+        },
+      },
     },
+  };
+
+  // Format number with commas
+  const formatNumber = (num: number) => {
+    return num.toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
   };
 
   if (isLoading) {
@@ -352,7 +374,7 @@ export default function Dashboard() {
               <Receipt className="h-6 w-6 text-blue-600" />
             </div>
             <p className="text-3xl font-bold text-blue-600">
-              ${totals.bill.toFixed(2)}
+              ${formatNumber(totals.bill)}
             </p>
           </div>
 
@@ -365,7 +387,7 @@ export default function Dashboard() {
               <ShoppingCart className="h-6 w-6 text-red-600" />
             </div>
             <p className="text-3xl font-bold text-red-600">
-              ${totals.expense.toFixed(2)}
+              ${formatNumber(totals.expense)}
             </p>
           </div>
 
@@ -378,7 +400,7 @@ export default function Dashboard() {
               <DollarSign className="h-6 w-6 text-green-600" />
             </div>
             <p className="text-3xl font-bold text-green-600">
-              ${totals.income.toFixed(2)}
+              ${formatNumber(totals.income)}
             </p>
           </div>
 
@@ -397,7 +419,7 @@ export default function Dashboard() {
                   : "text-red-600"
               }`}
             >
-              ${(totals.income - totals.expense - totals.bill).toFixed(2)}
+              ${formatNumber(totals.income - totals.expense - totals.bill)}
             </p>
           </div>
         </div>
