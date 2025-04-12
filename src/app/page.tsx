@@ -87,8 +87,8 @@ export default function Dashboard() {
   // Calculate monthly totals for the line chart
   const monthlyTotals = months.reduce(
     (acc, month) => {
-      const monthTransactions = transactions.filter((t) => {
-        // For all types, check the date matches the month in the current year
+      // Get transactions with dates for this month
+      const datedTransactions = transactions.filter((t) => {
         if (t.date) {
           const [year, monthStr] = t.date.split("-");
           return (
@@ -98,16 +98,38 @@ export default function Dashboard() {
         return false;
       });
 
-      acc[month.label] = {
-        expense: monthTransactions
+      // Get transactions without dates (bills and income)
+      const undatedTransactions = transactions.filter((t) => !t.date);
+
+      // Calculate monthly totals for dated transactions
+      const datedTotals = {
+        expense: datedTransactions
           .filter((t) => t.type === "expense")
           .reduce((sum, t) => sum + t.amount, 0),
-        bill: monthTransactions
+        bill: datedTransactions
           .filter((t) => t.type === "bill")
           .reduce((sum, t) => sum + t.amount, 0),
-        income: monthTransactions
+        income: datedTransactions
           .filter((t) => t.type === "income")
           .reduce((sum, t) => sum + t.amount, 0),
+      };
+
+      // Calculate monthly distribution of undated transactions
+      const undatedTotals = {
+        bill:
+          undatedTransactions
+            .filter((t) => t.type === "bill")
+            .reduce((sum, t) => sum + t.amount, 0) / 12,
+        income:
+          undatedTransactions
+            .filter((t) => t.type === "income")
+            .reduce((sum, t) => sum + t.amount, 0) / 12,
+      };
+
+      acc[month.label] = {
+        expense: datedTotals.expense,
+        bill: datedTotals.bill + undatedTotals.bill,
+        income: datedTotals.income + undatedTotals.income,
       };
       return acc;
     },
@@ -211,23 +233,13 @@ export default function Dashboard() {
     scales: {
       y: {
         min: 0,
-        max: Math.max(
-          Math.ceil(
-            Math.max(...Object.values(monthlyTotals).map((m) => m.income)) /
-              5000
-          ) * 5000,
-          Math.ceil(
-            Math.max(
-              ...Object.values(monthlyTotals).map((m) => m.expense + m.bill)
-            ) / 5000
-          ) * 5000
-        ),
+        max: 2000,
         ticks: {
-          stepSize: 5000,
+          stepSize: 100,
           callback: function (value: string | number) {
             const numValue =
               typeof value === "string" ? parseFloat(value) : value;
-            if (numValue % 5000 === 0) {
+            if (numValue % 100 === 0) {
               return `$${numValue}`;
             }
             return "";
