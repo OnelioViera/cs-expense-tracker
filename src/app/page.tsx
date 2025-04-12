@@ -84,21 +84,18 @@ export default function Dashboard() {
     { bill: 0, expense: 0, income: 0 }
   );
 
-  // Convert income from cents to dollars
-  const incomeInDollars = totals.income / 100;
-
   // Calculate monthly totals for the line chart
   const monthlyTotals = months.reduce(
     (acc, month) => {
       const monthTransactions = transactions.filter((t) => {
-        // For expenses, check the date
-        if (t.type === "expense" && t.date) {
-          return t.date.startsWith(
-            `${selectedMonth.split("-")[0]}-${month.value}`
+        // For all types, check the date matches the month in the current year
+        if (t.date) {
+          const [year, monthStr] = t.date.split("-");
+          return (
+            year === selectedMonth.split("-")[0] && monthStr === month.value
           );
         }
-        // For bills and income, include them in all months
-        return t.type === "bill" || t.type === "income";
+        return false;
       });
 
       acc[month.label] = {
@@ -139,14 +136,14 @@ export default function Dashboard() {
         tension: 0.3,
       },
       {
-        label: "Total Bills",
+        label: "Monthly Bills",
         data: months.map((m) => monthlyTotals[m.label]?.bill || 0),
         borderColor: "rgb(59, 130, 246)",
         backgroundColor: "rgba(59, 130, 246, 0.5)",
         tension: 0.3,
       },
       {
-        label: "Total Income",
+        label: "Monthly Income",
         data: months.map((m) => monthlyTotals[m.label]?.income || 0),
         borderColor: "rgb(34, 197, 94)",
         backgroundColor: "rgba(34, 197, 94, 0.5)",
@@ -214,13 +211,23 @@ export default function Dashboard() {
     scales: {
       y: {
         min: 0,
-        max: Math.ceil(incomeInDollars / 500) * 500, // Use income in dollars
+        max: Math.max(
+          Math.ceil(
+            Math.max(...Object.values(monthlyTotals).map((m) => m.income)) /
+              5000
+          ) * 5000,
+          Math.ceil(
+            Math.max(
+              ...Object.values(monthlyTotals).map((m) => m.expense + m.bill)
+            ) / 5000
+          ) * 5000
+        ),
         ticks: {
-          stepSize: 500,
+          stepSize: 5000,
           callback: function (value: string | number) {
             const numValue =
               typeof value === "string" ? parseFloat(value) : value;
-            if (numValue % 500 === 0) {
+            if (numValue % 5000 === 0) {
               return `$${numValue}`;
             }
             return "";
