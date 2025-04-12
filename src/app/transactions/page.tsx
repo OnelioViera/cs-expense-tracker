@@ -84,10 +84,7 @@ export default function Transactions() {
   });
   const [selectedMonth, setSelectedMonth] = useState(() => {
     const now = new Date();
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
-      2,
-      "0"
-    )}`;
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
   });
   const [filter, setFilter] = useState<"all" | "bill" | "expense" | "income">(
     "all"
@@ -245,72 +242,68 @@ export default function Transactions() {
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                Expense Tracker
-              </h1>
+              <h1 className="text-2xl font-bold text-gray-900">Transactions</h1>
               <p className="text-gray-600 mt-1">
-                Add and manage your transactions
+                View and manage your transactions
               </p>
             </div>
             <div className="flex items-center gap-6">
-              <div className="flex items-center gap-4">
-                <select
-                  value={selectedMonth.split("-")[1]}
-                  onChange={(e) =>
-                    setSelectedMonth(
-                      `${selectedMonth.split("-")[0]}-${e.target.value}`
-                    )
-                  }
-                  className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900 h-10 px-3"
+              <select
+                value={selectedMonth.split("-")[1]}
+                onChange={(e) =>
+                  setSelectedMonth(
+                    `${selectedMonth.split("-")[0]}-${e.target.value}`
+                  )
+                }
+                className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900 h-10 px-3"
+              >
+                {months.map((month) => (
+                  <option key={month.value} value={month.value}>
+                    {month.label}
+                  </option>
+                ))}
+              </select>
+              <select
+                value={selectedMonth.split("-")[0]}
+                onChange={(e) =>
+                  setSelectedMonth(
+                    `${e.target.value}-${selectedMonth.split("-")[1]}`
+                  )
+                }
+                className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900 h-10 px-3"
+              >
+                {years.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex items-center gap-4 border-l border-gray-200 pl-6">
+              <Link
+                href="/monthly"
+                className="inline-flex items-center text-blue-600 hover:text-blue-800"
+              >
+                <Calendar className="h-5 w-5 mr-2" />
+                Monthly Summary
+              </Link>
+              <Link
+                href="/"
+                className="inline-flex items-center text-blue-600 hover:text-blue-800"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 mr-2"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
                 >
-                  {months.map((month) => (
-                    <option key={month.value} value={month.value}>
-                      {month.label}
-                    </option>
-                  ))}
-                </select>
-                <select
-                  value={selectedMonth.split("-")[0]}
-                  onChange={(e) =>
-                    setSelectedMonth(
-                      `${e.target.value}-${selectedMonth.split("-")[1]}`
-                    )
-                  }
-                  className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900 h-10 px-3"
-                >
-                  {years.map((year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex items-center gap-4 border-l border-gray-200 pl-6">
-                <Link
-                  href="/monthly"
-                  className="inline-flex items-center text-blue-600 hover:text-blue-800"
-                >
-                  <Calendar className="h-5 w-5 mr-2" />
-                  Monthly Summary
-                </Link>
-                <Link
-                  href="/"
-                  className="inline-flex items-center text-blue-600 hover:text-blue-800"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 mr-2"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
-                    />
-                  </svg>
-                  Dashboard
-                </Link>
-              </div>
+                  <path
+                    fillRule="evenodd"
+                    d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
+                  />
+                </svg>
+                Dashboard
+              </Link>
             </div>
           </div>
         </div>
