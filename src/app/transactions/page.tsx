@@ -72,6 +72,7 @@ const descriptionOptions: Record<"bill" | "expense" | "income", string[]> = {
     "Microsoft, Annualy",
     "Annual Expenses",
     "Bariatric Vitamins",
+    "Orchard Valley",
   ],
   income: ["Salary", "Gifts", "Pension", "Daniel's Rent", "NuVet", "Other"],
 };
