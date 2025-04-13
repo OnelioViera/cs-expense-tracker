@@ -41,6 +41,7 @@ const descriptionOptions: Record<"bill" | "expense" | "income", string[]> = {
     "Post Office",
     "Apple Storage",
     "HOA",
+    "Google One",
   ],
   expense: [
     "Groceries",
