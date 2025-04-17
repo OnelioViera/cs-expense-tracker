@@ -44,6 +44,7 @@ export default function MonthlySummary() {
     "Maintenance",
     "Alcohol",
     "Gas",
+    "Post Office",
     "Other",
   ];
 
