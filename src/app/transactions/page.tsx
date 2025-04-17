@@ -61,6 +61,8 @@ const descriptionOptions: Record<"bill" | "expense" | "income", string[]> = {
     "Bariatric Vitamins",
     "Orchard Valley",
     "Chick-fil-A",
+    "Post Office",
+    "Office Supplies",
     "Miscellaneous",
   ],
   income: ["Salary", "Gifts", "Pension", "Daniel's Rent", "NuVet", "Savings", "Other"],
