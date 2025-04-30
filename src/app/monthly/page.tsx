@@ -35,6 +35,8 @@ export default function MonthlySummary() {
     "Transportation",
     "Entertainment",
     "Dining Out",
+    "Glucose Tablets",
+    "Protein Bars",
     "Shopping",
     "Healthcare",
     "Education",

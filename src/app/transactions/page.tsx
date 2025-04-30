@@ -46,6 +46,8 @@ const descriptionOptions: Record<"bill" | "expense" | "income", string[]> = {
     "Transportation",
     "Entertainment",
     "Dining Out",
+    "Glucose Tablets",
+    "Protein Bars",
     "Shopping",
     "Healthcare",
     "Education",
